@@ -1,0 +1,57 @@
+INSTALAÇÃO DO GLPI 9.4.5 NO DEBIAN 10.6
+
+
+INSTALAÇÃO
+Instalação dos pacotes necessários: 
+
+# apt -y install apache2 bsdtar bzip2 curl libapache2-mod-php7.3 libmariadbd-dev mariadb-server php-soap php-cas php7.3 php-apcu php7.3-cli php7.3-common php7.3-curl php7.3-gd php7.3-imap php7.3-ldap php7.3-mysql php7.3-snmp php7.3-xmlrpc php7.3-xml php7.3-mbstring php7.3-bcmath 
+
+#apt-get install apache2
+#apt-get install php php-curl php-gd php-json php-mbstring php-mysql php-simplexml php-xml php-xmlrpc php-mcrypt php-zip php-imap php-ldap php-apcu php-cas
+#apache2 restart
+
+Download do GLPI 9.4.5: 
+
+ wget -qO- https://github.com/glpi-project/glpi/releases/download/9.4.5/glpi-9.4.5.tgz | tar -zxv 
+
+Mover o diretório GLPI para /var/www/html/: 
+
+# mv glpi /var/www/html/ 
+
+
+Conceder permissão ao usuário do Apache no diretório /var/www/html/glpi: 
+
+# chown www-data:www-data /var/www/html/glpi -Rf
+# chmod 775 /var/www/html/glpi -Rf 
+
+
+CONFIGURAÇÃO DO APACHE2 PARA O GLPI
+Criar o arquivo "glpi.conf" em /etc/apache2/conf-available/: 
+
+# nano /etc/apache2/conf-available/glpi.conf 
+
+Conteúdo do arquivo "glpi.conf": 
+
+<Directory /var/www/html/glpi>
+    AllowOverride All
+</Directory>
+
+Habilitando configuração do GLPi: 
+
+# a2enconf glpi.conf (Opcional para inicialização no boot)
+# systemctl reload apache2 
+
+Criação do Banco de Dados e Usuário do Banco: 
+
+mysql -u root -e "create database glpi character set utf8";
+mysql -u root -e "create user 'glpi'@'localhost' identified by 'colocar senha banco de dados'";
+mysql -u root -e "grant all privileges on glpi.* to 'glpi'@'localhost' with grant option"; 
+
+Abra o navegador: http://IPdoServidor/glpi
+
+Os usuários e senhas padrões são:
+
+glpi/glpi = para a conta do usuário administrador
+tech/tech = para a conta do usuário técnico
+normal/normal = para a conta do usuário normal
+post-only/postonly = para a conta do usuário postonly
